@@ -1,80 +1,100 @@
-import React from "react";
-import LoginPage from "./login"
+import React, { useState, useEffect, useContext, createContext } from "react";
+import LoginPage from "./login";
 import RegisterPage from "./register";
 import ContactsPage from "./contacts";
 import ContactDetailsPage from "./contact-details";
 import ContactCreatePage from "./contact-create";
-import { getContacts } from "../utils/contacts";
 
-const mockContacts = [
-  {
-    "id": 1,
-    "firstName": "Culley",
-    "lastName": "Snelman",
-    "profilePic": "https://i.pravatar.cc/300?u=1",
-    "phoneNumber": "351-346-6140",
-    "email": "csnelman0@blog.com",
-    "address": "09 Eggendart Parkway"
-  }, 
-  {
-    "id": 2,
-    "firstName": "Tammara",
-    "lastName": "Allcorn",
-    "profilePic": "https://i.pravatar.cc/300?u=2",
-    "phoneNumber": "676-783-9239",
-    "email": "tallcorn1@senate.gov",
-    "address": "78145 Brentwood Court"
-  }, 
-  {
-    "id": 3,
-    "firstName": "Cassandry",
-    "lastName": "Roze",
-    "profilePic": "https://i.pravatar.cc/300?u=3",
-    "phoneNumber": "223-879-6692",
-    "email": "croze2@w3.org",
-    "address": "2079 Morrow Parkway"
-  }, 
-  {
-    "id": 4,
-    "firstName": "Koressa",
-    "lastName": "Galey",
-    "profilePic": "https://i.pravatar.cc/300?u=4",
-    "phoneNumber": "761-858-5580",
-    "email": "kgaley3@economist.com",
-    "address": "5 Hanover Alley"
-  }
-];
+import ContactsProvider from "../Context/ContactsContext";
 
+const UserContext = createContext(/* some initial value */);
 
-class App extends React.Component {
+function Cakes() {
+  return <div>🎂 :D</div>;
+}
 
-  constructor(props) {
-    super(props);
+function Burger() {
+  return <div>🍔</div>;
+}
 
-    this.state = {
-      contacts: []
-    }
-  }
+function SideBar({ food, snack: Snack }) {
+  return (
+    <div>
+      {food}
+      <Snack />
+      Side Bar <Box />
+    </div>
+  );
+}
 
-  componentDidMount() {
-    const storedContacts = getContacts();
+function Box() {
+  return (
+    <div>
+      Message <Message />
+    </div>
+  );
+}
 
-    this.setState({
-      contacts: storedContacts.length ? storedContacts : mockContacts
-    })
-  }
+function Message() {
+  const user = useContext(UserContext);
 
-  render() {
-    return (
-      <div>
-        <LoginPage />
-        <RegisterPage />
-        <ContactsPage contacts={this.state.contacts} />
-        <ContactDetailsPage contact={this.state.contacts[0]} />
-        <ContactCreatePage />
-      </div>
-    );
-  }
+  return (
+    <div>
+      Hi {user.name}, you like {user.favoriteAnimal}
+    </div>
+  );
+}
+
+function Button({ label }) {
+  return (
+    <button style={{ background: "red", padding: "10px", fontSize: "23px" }}>
+      {label}
+    </button>
+  );
+}
+
+function Button2({ children }) {
+  return (
+    <button style={{ background: "blue", padding: "10px", fontSize: "23px" }}>
+      {children}
+    </button>
+  );
+}
+
+function App() {
+  const [user, setUser] = useState({ name: "Erik", favoriteAnimal: "Rhinos" });
+
+  return (
+    <div>
+      <Button label="Click Me" />
+      <Button label="Don't Click Me" />
+
+      <Button2>Press Me!</Button2>
+      <Button2>Another one!</Button2>
+      <Button2>
+        <strong>Hello</strong> <em>there</em>
+      </Button2>
+
+      <UserContext.Provider value={user}>
+        <SideBar food={<Burger />} snack={Cakes} />
+      </UserContext.Provider>
+
+      <LoginPage />
+      <RegisterPage />
+
+      <ContactsProvider>
+        <ContactsPage />
+
+        {/* <ContactDetailsPage contact={contacts[0]} /> */}
+      </ContactsProvider>
+
+      <ContactCreatePage />
+    </div>
+  );
 }
 
 export default App;
+
+// 1 creating the context using createContext
+// 2 setting up the Provider
+// 3
